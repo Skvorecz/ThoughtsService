@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Thoughts;
+namespace Thoughts.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
