@@ -7,8 +7,8 @@ public class SigningSymmetricKey : IJwtSigningEncodingKey, IJwtSigningDecodingKe
 {
 	private readonly SymmetricSecurityKey secretKey;
  
-	public string SigningAlgorithm { get; } = SecurityAlgorithms.HmacSha256;
- 
+	public string SigningAlgorithm => SecurityAlgorithms.HmacSha256;
+
 	public SigningSymmetricKey(string key)
 	{
 		secretKey = new SymmetricSecurityKey (Encoding.UTF8.GetBytes(key));

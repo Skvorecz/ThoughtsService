@@ -10,7 +10,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var connectionString = builder.Configuration.GetConnectionString("ThoughtsDbConnectionString");
+var connectionString = builder.Configuration["ThoughtsDbConnectionString"];
 builder.Services.AddDbContext<ThoughtsDbContext>(options =>
 	options.UseSqlServer(connectionString));
 
