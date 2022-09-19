@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Thoughts;
 
@@ -7,29 +10,39 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var connectionString = builder.Configuration.GetConnectionString("ThoughtsDbConnectionString");
+builder.Services.AddDbContext<ThoughtsDbContext>(options =>
+	options.UseSqlServer(connectionString));
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+	.AddEntityFrameworkStores<ThoughtsDbContext>();
+
+
 const string signingSecurityKey = "0d5b3235a8b403c3dab9c3f4f65c07fcalskd234n1k41230";
 var signingKey = new SigningSymmetricKey(signingSecurityKey);
 builder.Services.AddSingleton<IJwtSigningEncodingKey>(signingKey);
 
-const string jwtSchemeName = "JwtBearer";
 builder.Services
-	.AddAuthentication(options => {
-		options.DefaultAuthenticateScheme = jwtSchemeName;
-		options.DefaultChallengeScheme = jwtSchemeName;
+	.AddAuthentication(options =>
+	{
+		options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+		options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 	})
-	.AddJwtBearer(jwtSchemeName, jwtBearerOptions => {
-		jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters() {
+	.AddJwtBearer(jwtBearerOptions =>
+	{
+		jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
+		{
 			ValidateIssuerSigningKey = true,
 			IssuerSigningKey = signingKey.GetKey(),
- 
+
 			ValidateIssuer = true,
 			ValidIssuer = "ThoughtsService",
- 
+
 			ValidateAudience = true,
 			ValidAudience = "ThoughtsClient",
- 
+
 			ValidateLifetime = true,
- 
+
 			ClockSkew = TimeSpan.FromSeconds(5)
 		};
 	});
