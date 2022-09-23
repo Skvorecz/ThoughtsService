@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Thoughts.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/authentication")]
 [ApiController]
 public class AuthenticationController : ControllerBase
 {
@@ -29,29 +29,29 @@ public class AuthenticationController : ControllerBase
 	[HttpPost]
 	public async Task<IActionResult> Authenticate(AuthenticationRequest authRequest)
 	{
-		var result = signInManager.PasswordSignInAsync(authRequest.Name,
-																	authRequest.Password,
-																	false,
-																	false);
-		if (!result.IsCompletedSuccessfully)
+		var result = await signInManager.PasswordSignInAsync(authRequest.Name,
+		                                                     authRequest.Password,
+		                                                     false,
+		                                                     false);
+		if (!result.Succeeded)
 		{
 			return Unauthorized();
 		}
 
 		var claims = new[]
-		{
-			new Claim(ClaimTypes.NameIdentifier, authRequest.Name)
-		};
+		             {
+			             new Claim(ClaimTypes.NameIdentifier, authRequest.Name)
+		             };
 
 		var token = new JwtSecurityToken(
-			"ThoughtsService",
-			"ThoughtsClient",
-			claims,
-			expires: DateTime.Now.AddDays(ExpirationDays),
-			signingCredentials: new SigningCredentials(
-				signingEncodingKey.GetKey(),
-				signingEncodingKey.SigningAlgorithm)
-		);
+		                                 "ThoughtsService",
+		                                 "ThoughtsClient",
+		                                 claims,
+		                                 expires: DateTime.Now.AddDays(ExpirationDays),
+		                                 signingCredentials: new SigningCredentials(
+		                                  signingEncodingKey.GetKey(),
+		                                  signingEncodingKey.SigningAlgorithm)
+		                                );
 
 		var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
 		return Ok(jwtToken);

@@ -14,8 +14,15 @@ var connectionString = builder.Configuration["ThoughtsDbConnectionString"];
 builder.Services.AddDbContext<ThoughtsDbContext>(options =>
 	options.UseSqlServer(connectionString));
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+       {
+	       options.SignIn.RequireConfirmedAccount = false;
+	       options.SignIn.RequireConfirmedEmail = false;
+	       options.SignIn.RequireConfirmedPhoneNumber = false;
+       })
 	.AddEntityFrameworkStores<ThoughtsDbContext>();
+
+builder.Services.AddScoped<IThoughtsRepository, ThoughtsRepository>();
 
 
 const string signingSecurityKey = "0d5b3235a8b403c3dab9c3f4f65c07fcalskd234n1k41230";
