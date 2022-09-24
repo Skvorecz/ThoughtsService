@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Thoughts;
+namespace DataAccess;
 
 public class ThoughtsDbContext : IdentityDbContext
 {

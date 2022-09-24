@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Thoughts.Migrations
+namespace DataAccess.Migrations
 {
     public partial class addnotnullconstraints : Migration
     {

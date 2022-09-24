@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Thoughts.Migrations
+namespace DataAccess.Migrations
 {
     public partial class initial : Migration
     {

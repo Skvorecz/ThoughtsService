@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Thoughts;
+namespace DataAccess;
 
 public class Thought
 {

@@ -4,11 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Thoughts;
 
 #nullable disable
 
-namespace Thoughts.Migrations
+namespace DataAccess.Migrations
 {
     [DbContext(typeof(ThoughtsDbContext))]
     partial class ThoughtsDbContextModelSnapshot : ModelSnapshot
