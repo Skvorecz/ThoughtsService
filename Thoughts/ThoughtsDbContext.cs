@@ -1,31 +1,26 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Thoughts;
 
 public class ThoughtsDbContext : IdentityDbContext
 {
+	public DbSet<Thought> Thoughts { get; set; }
+	
 	public ThoughtsDbContext(DbContextOptions options) : base(options)
 	{
 	}
 
-	public DbSet<Thought> Thoughts { get; set; }
-
 	protected override void OnModelCreating(ModelBuilder builder)
 	{
 		base.OnModelCreating(builder);
-		
-		builder.Entity<Thought>()
-		       .Property(t => t.Text).IsRequired();
-		builder.Entity<Thought>()
-		       .Property(t => t.CreateTime).IsRequired();
-		builder.Entity<Thought>()
-		       .Property(t => t.AuthorId).IsRequired();
-		builder.Entity<Thought>()
-		       .HasOne<IdentityUser>()
-		       .WithMany()
-		       .HasForeignKey(u => u.AuthorId)
-		       .IsRequired();
+
+		builder.Entity<Thought>(b =>
+		{
+			b.HasKey(t => t.Id);
+			b.Property(t => t.Text).IsRequired();
+			b.Property(t => t.CreateTime).IsRequired();
+			b.Property(t => t.AuthorId).IsRequired();
+		});
 	}
 }

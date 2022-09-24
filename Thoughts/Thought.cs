@@ -8,6 +8,7 @@ public class Thought
 	public string Text { get; set; }
 	public DateTime CreateTime { get; set; }
 	
+	
 	public string AuthorId { get; set; }
 	public IdentityUser Author { get; set; }
 }
