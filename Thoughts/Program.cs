@@ -1,3 +1,4 @@
+using Application;
 using DataAccess;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -24,6 +25,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 	.AddEntityFrameworkStores<ThoughtsDbContext>();
 
 builder.Services.AddScoped<IThoughtsRepository, ThoughtsRepository>();
+builder.Services.AddScoped<IThoughtsService, ThoughtsService>();
 
 
 var signingSecurityKey = builder.Configuration["SigningKey"];

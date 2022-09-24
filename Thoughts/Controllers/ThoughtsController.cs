@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Application;
+using DataAccess;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,43 +11,48 @@ namespace Thoughts.Controllers;
 [ApiController]
 public class ThoughtsController : ControllerBase
 {
-	private readonly IThoughtsRepository repository;
+	private readonly IThoughtsService thoughtsService;
 	private readonly UserManager<IdentityUser> userManager;
 
-	public ThoughtsController(IThoughtsRepository repository,
-		UserManager<IdentityUser> userManager)
+	public ThoughtsController(UserManager<IdentityUser> userManager, IThoughtsService thoughtsService)
 	{
-		this.repository = repository;
 		this.userManager = userManager;
+		this.thoughtsService = thoughtsService;
 	}
 
 	[HttpPost]
-	public async Task<IActionResult> Create([FromBody]string text)
+	public async Task<IActionResult> CreateAsync([FromBody]string text)
 	{
-		await repository.Create(text,
-		                        DateTime.UtcNow,
-		                        await GetUser());
+		var author = await GetUserAsync();
+		await thoughtsService.CreateThoughtAsync(text, author);
+		
 		return Ok();
 	}
 
 	[HttpGet]
-	public async Task<IActionResult> Get(int id)
+	public async Task<IActionResult> GetByIdAsync(int id)
 	{
-		var user = await GetUser();
-		var thought = await repository.GetThoughtById(id);
-		return thought.Author == user
-			       ? Ok(thought)
-			       : Unauthorized();
+		var user = await GetUserAsync();
+
+		try
+		{
+			var thought = await thoughtsService.GetThoughtByIdAsync(id, user);
+			return Ok(thought);
+		}
+		catch (ArgumentException)
+		{
+			return Unauthorized();
+		}
 	}
 
 	[HttpGet("all")]
-	public async Task<IActionResult> GetAll()
+	public async Task<IActionResult> GetAllAsync()
 	{
-		var thoughts = await repository.GetAllUserThoughts(await GetUser());
+		var thoughts = await thoughtsService.GetAllUserThoughtsAsync(await GetUserAsync());
 		return Ok(thoughts);
 	}
 
-	private async Task<IdentityUser> GetUser()
+	private async Task<IdentityUser> GetUserAsync()
 	{
 		return await userManager.GetUserAsync(User);
 	}
