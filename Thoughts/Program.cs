@@ -25,7 +25,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 builder.Services.AddScoped<IThoughtsRepository, ThoughtsRepository>();
 
 
-const string signingSecurityKey = "0d5b3235a8b403c3dab9c3f4f65c07fcalskd234n1k41230";
+var signingSecurityKey = builder.Configuration["SigningKey"];
 var signingKey = new SigningSymmetricKey(signingSecurityKey);
 builder.Services.AddSingleton<IJwtSigningEncodingKey>(signingKey);
 

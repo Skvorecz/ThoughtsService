@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,7 +20,7 @@ public class ThoughtsController : ControllerBase
 	}
 
 	[HttpPost]
-	public async Task<IActionResult> Create(string text)
+	public async Task<IActionResult> Create([FromBody]string text)
 	{
 		await repository.Create(text,
 		                        DateTime.UtcNow,
@@ -39,10 +38,10 @@ public class ThoughtsController : ControllerBase
 			       : Unauthorized();
 	}
 
-	[HttpGet]
+	[HttpGet("all")]
 	public async Task<IActionResult> GetAll()
 	{
-		var thoughts = repository.GetAllUserThoughts(await GetUser());
+		var thoughts = await repository.GetAllUserThoughts(await GetUser());
 		return Ok(thoughts);
 	}
 

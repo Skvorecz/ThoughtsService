@@ -14,12 +14,17 @@ public class ThoughtsRepository : IThoughtsRepository
 
 	public async Task Create(string text, DateTime createTime, IdentityUser author)
 	{
-		var thought = new Thought()
+		if (author == null)
 		{
-			Text = text,
-			CreateTime = createTime,
-			Author = author
-		};
+			throw new ArgumentNullException(nameof(author));
+		}
+
+		var thought = new Thought()
+		              {
+			              Text = text,
+			              CreateTime = createTime,
+			              Author = author
+		              };
 
 		await dbContext.Thoughts.AddAsync(thought);
 	}
