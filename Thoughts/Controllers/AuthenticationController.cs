@@ -14,23 +14,26 @@ public class AuthenticationController : ControllerBase
 	private const int ExpirationDays = 1;
 	private readonly UserManager<IdentityUser> userManager;
 	private readonly SignInManager<IdentityUser> signInManager;
+	private readonly IUserStore<IdentityUser> store;
 	private readonly IJwtSigningEncodingKey signingEncodingKey;
 
 	public AuthenticationController(IJwtSigningEncodingKey signingEncodingKey,
-		UserManager<IdentityUser> userManager,
-		SignInManager<IdentityUser> signInManager)
+	                                UserManager<IdentityUser> userManager,
+	                                SignInManager<IdentityUser> signInManager,
+	                                IUserStore<IdentityUser> store)
 	{
 		this.signingEncodingKey = signingEncodingKey;
 		this.userManager = userManager;
 		this.signInManager = signInManager;
+		this.store = store;
 	}
 
 	[AllowAnonymous]
 	[HttpPost]
-	public async Task<IActionResult> Authenticate(AuthenticationRequest authRequest)
+	public async Task<IActionResult> Authenticate(AuthenticationRequest request)
 	{
-		var result = await signInManager.PasswordSignInAsync(authRequest.Name,
-		                                                     authRequest.Password,
+		var result = await signInManager.PasswordSignInAsync(request.Name,
+		                                                     request.Password,
 		                                                     false,
 		                                                     false);
 		if (!result.Succeeded)
@@ -38,9 +41,11 @@ public class AuthenticationController : ControllerBase
 			return Unauthorized();
 		}
 
+		var user = await store.FindByNameAsync(request.Name, new CancellationToken());
+
 		var claims = new[]
 		             {
-			             new Claim(ClaimTypes.NameIdentifier, authRequest.Name)
+			             new Claim(ClaimTypes.NameIdentifier, user.Id)
 		             };
 
 		var token = new JwtSecurityToken(

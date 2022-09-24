@@ -1,8 +1,8 @@
 ﻿using Application;
-using DataAccess;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Thoughts.Dto;
 
 namespace Thoughts.Controllers;
 
@@ -29,7 +29,7 @@ public class ThoughtsController : ControllerBase
 		return Ok();
 	}
 
-	[HttpGet]
+	[HttpGet("{id:int}")]
 	public async Task<IActionResult> GetByIdAsync(int id)
 	{
 		var user = await GetUserAsync();
@@ -37,7 +37,8 @@ public class ThoughtsController : ControllerBase
 		try
 		{
 			var thought = await thoughtsService.GetThoughtByIdAsync(id, user);
-			return Ok(thought);
+			var dto = new ThoughtDto(thought.Id, thought.Text, thought.CreateTime);
+			return Ok(dto);
 		}
 		catch (ArgumentException)
 		{
@@ -48,7 +49,9 @@ public class ThoughtsController : ControllerBase
 	[HttpGet("all")]
 	public async Task<IActionResult> GetAllAsync()
 	{
-		var thoughts = await thoughtsService.GetAllUserThoughtsAsync(await GetUserAsync());
+		var user = await GetUserAsync();
+		var thoughts = (await thoughtsService.GetAllUserThoughtsAsync(user))
+		                                    .Select(t=>new ThoughtDto(t.Id, t.Text, t.CreateTime));
 		return Ok(thoughts);
 	}
 
